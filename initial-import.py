@@ -55,13 +55,14 @@ def main(url):
 
         # Try and parse films out of the description
         films = []
-        for m in re.finditer(r"\b(?P<title>[A-Z][A-Z'\.:]+(?:\s+[A-Z'\.:]+)*)\b(?:\s\((?P<year>\d\d\d\d)\))?", description):
-            film_title = m.group("title")
+        for m in re.finditer(r"\b(?P<title>[A-Z][A-Z'\.:]+(?:\s+[A-Z'\.:\&]+)+)\b(?:\s\((?P<year>\d\d\d\d)\))?", description):
+            film_title = m.group("title").strip()
             film_year = m.group("year")
 
-            # Ignore "PLUS:"
-            if film_title.startswith("PLUS"):
-                continue
+            # Ignore some false positives
+            for needle in ("PLUS", "NOTE"):
+                if film_title.startswith(needle):
+                    continue
 
             films.append({
                 "title": film_title,
