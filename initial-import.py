@@ -57,17 +57,20 @@ def main(url):
         films = []
         for m in re.finditer(r"\b(?P<title>[A-Z][A-Z'\.:]+(?:\s+[A-Z'\.:\&]+)+)\b(?:\s\((?P<year>\d\d\d\d)\))?", description):
             film_title = m.group("title").strip()
-            film_year = m.group("year")
 
             # Ignore some false positives
             for needle in ("PLUS", "NOTE"):
                 if film_title.startswith(needle):
                     continue
 
-            films.append({
-                "title": film_title,
-                "year": film_year,
-            })
+            film = {"title": film_title}
+
+            film_year = m.group("year")
+
+            if film_year:
+                film["year"] = int(film_year)
+
+            films.append(film)
 
         if not films:
             print("-")
